@@ -477,3 +477,72 @@ input, select, textarea {
   color: #EF4444;
   background: rgba(239,68,68,0.1);
 }
+
+
+/* ==========================
+   React Quill
+========================== */
+
+.ql-toolbar {
+  background: #1a1a1a;
+  border: none !important;
+  border-bottom: 1px solid rgba(255,255,255,.08) !important;
+  border-radius: 8px 8px 0 0;
+}
+
+.ql-container {
+  background: #1a1a1a;
+  border: none !important;
+  border-radius: 0 0 8px 8px;
+}
+
+.ql-editor {
+  min-height: 150px;
+  color: #f3f4f6;
+}
+
+.ql-editor.ql-blank::before {
+  color: #6b7280;
+}
+
+/* ==========================
+   Responsive
+========================== */
+
+@media (max-width: 1024px) {
+
+  .tasks-container {
+    overflow-x: auto;
+  }
+
+  .table-header-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-input-glass {
+    width: 100%;
+  }
+
+  .table-th,
+  .table-td {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+
+  .stat-card {
+    padding: 16px;
+  }
+
+  .table-th,
+  .table-td {
+    font-size: 12px;
+  }
+
+  .btn-gradient {
+    width: 100%;
+    justify-content: center;
+  }
+}

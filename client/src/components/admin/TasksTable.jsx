@@ -1,15 +1,17 @@
+import { useState } from 'react';
 import { deleteTask } from '../../api/tasks';
+import ConfirmModal from '../common/ConfirmModal';
 
 /* ── SVG Action Icons ── */
 const IconEdit = () => (
   <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M11 4l5 5M3 16l1-4L14 2a2 2 0 012.83 0l1.17 1.17A2 2 0 0118 5.17L8 15l-4 1z"/>
+    <path d="M11 4l5 5M3 16l1-4L14 2a2 2 0 012.83 0l1.17 1.17A2 2 0 0118 5.17L8 15l-4 1z" />
   </svg>
 );
 
 const IconDelete = () => (
   <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M3 6h14M8 6V4a1 1 0 011-1h2a1 1 0 011 1v2M17 6l-1 12a2 2 0 01-2 2H6a2 2 0 01-2-2L3 6M9 10v5M11 10v5"/>
+    <path d="M3 6h14M8 6V4a1 1 0 011-1h2a1 1 0 011 1v2M17 6l-1 12a2 2 0 01-2 2H6a2 2 0 01-2-2L3 6M9 10v5M11 10v5" />
   </svg>
 );
 
@@ -34,18 +36,20 @@ const fmtDate = (raw) => {
 
 /* ── Status badge class ── */
 const STATUS_CLASS = {
-  Open:      'status-badge-Open',
-  Claimed:   'status-badge-Claimed',
+  Open: 'status-badge-Open',
+  Claimed: 'status-badge-Claimed',
   Submitted: 'status-badge-Submitted',
-  Approved:  'status-badge-Approved',
-  Rejected:  'status-badge-Rejected',
+  Approved: 'status-badge-Approved',
+  Rejected: 'status-badge-Rejected',
 };
 
 const TasksTable = ({ tasks, onEdit, onRefresh }) => {
+  const [deleteId, setDeleteId] = useState(null);
 
-  const handleDelete = async (id) => {
+  const handleDelete = async () => {
     try {
-      await deleteTask(id);
+      await deleteTask(deleteId);
+      setDeleteId(null);
       onRefresh();
     } catch {
       alert('Failed to delete task');
@@ -57,17 +61,23 @@ const TasksTable = ({ tasks, onEdit, onRefresh }) => {
       <div className="py-20 text-center" style={{ color: 'rgba(255,255,255,0.3)', fontSize: '14px' }}>
         <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2"
           style={{ margin: '0 auto 12px', opacity: 0.3 }} strokeLinecap="round" strokeLinejoin="round">
-          <rect x="3" y="3" width="18" height="18" rx="3"/>
-          <path d="M9 12h6M9 8h6M9 16h4"/>
+          <rect x="3" y="3" width="18" height="18" rx="3" />
+          <path d="M9 12h6M9 8h6M9 16h4" />
         </svg>
         No tasks yet. Create your first task above.
       </div>
     );
-  }
+  };
+
+  /* ── Strip HTML tags for plain-text preview ── */
+  const stripHtml = (html) => {
+    if (!html) return '';
+    return html.replace(/<[^>]*>/g, '').trim();
+  };
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full border-collapse" style={{ fontSize: '13.5px' }}>
+    <div className="w-full overflow-x-auto">
+      <table className="min-w-[760px] sm:min-w-[900px] w-full border-collapse" style={{ fontSize: '13.5px' }}>
         <thead>
           <tr>
             <th className="table-th">Title</th>
@@ -92,7 +102,7 @@ const TasksTable = ({ tasks, onEdit, onRefresh }) => {
                 </span>
                 {task.description && (
                   <span className="block truncate" style={{ color: '#4B5563', fontSize: '12px', maxWidth: '240px' }}>
-                    {task.description}
+                    {stripHtml(task.description)}
                   </span>
                 )}
               </td>
@@ -145,7 +155,7 @@ const TasksTable = ({ tasks, onEdit, onRefresh }) => {
                     <IconEdit />
                   </button>
                   <button
-                    onClick={() => handleDelete(task._id)}
+                    onClick={() => setDeleteId(task._id)}
                     title="Delete task"
                     className="action-btn action-btn-delete">
                     <IconDelete />
@@ -156,6 +166,14 @@ const TasksTable = ({ tasks, onEdit, onRefresh }) => {
           ))}
         </tbody>
       </table>
+
+      <ConfirmModal
+        open={!!deleteId}
+        title="Delete Task"
+        message="Are you sure you want to delete this task? This action cannot be undone."
+        onCancel={() => setDeleteId(null)}
+        onConfirm={handleDelete}
+      />
     </div>
   );
 };

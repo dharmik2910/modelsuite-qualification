@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
+import { fetchAllSubmissions } from '../../api/submissions';
 import Sidebar from '../../components/admin/Sidebar';
 import SubmissionReviewModal from '../../components/admin/SubmissionReviewModal';
-import { fetchAllSubmissions } from '../../api/submissions';
 
 const REVIEW_STATUS_CLASS = {
   Pending:  'status-badge-Submitted',
@@ -35,23 +35,23 @@ const SubmissionsPage = () => {
     <div className="flex min-h-screen bg-bg-dark">
       <Sidebar />
 
-      <main className="ml-60 flex-1 px-10 py-9">
+      <main className="lg:ml-[240px] flex-1 px-4 sm:px-6 lg:px-10 py-6 lg:py-9 pt-[76px] lg:pt-9 min-w-0">
 
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-[26px] font-bold tracking-tight text-text-primary">Submissions</h1>
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-[20px] sm:text-[26px] font-bold tracking-tight text-text-primary">Submissions</h1>
           <p className="mt-1 text-sm text-text-muted">Review talent submissions and approve or reject them.</p>
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-4 gap-4 mb-7">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-7">
           {[
             { label: 'Total',    value: submissions.length, color: 'text-text-primary' },
             { label: 'Pending',  value: pending,            color: 'text-info'         },
             { label: 'Approved', value: approved,           color: 'text-success'      },
             { label: 'Rejected', value: rejected,           color: 'text-danger'       },
           ].map(({ label, value, color }) => (
-            <div key={label} className="bg-bg-card border border-border rounded-xl px-6 py-5 flex flex-col gap-2 hover:border-border-light transition-colors">
+            <div key={label} className="bg-bg-card border border-border rounded-xl px-4 sm:px-6 py-4 sm:py-5 flex flex-col gap-2 hover:border-border-light transition-colors">
               <span className="text-[12px] font-medium text-text-muted uppercase tracking-[0.6px]">{label}</span>
               <span className={`text-[32px] font-bold tracking-tight ${color}`}>{value}</span>
             </div>
@@ -60,8 +60,8 @@ const SubmissionsPage = () => {
 
         {/* Table */}
         <div className="bg-bg-card border border-border rounded-xl overflow-hidden">
-          <div className="flex items-center justify-between px-6 py-5 border-b border-border">
-            <h2 className="text-[16px] font-semibold text-text-primary">All Submissions</h2>
+          <div className="flex items-center justify-between px-4 sm:px-6 py-4 sm:py-5 border-b border-border">
+            <h2 className="text-[15px] sm:text-[16px] font-semibold text-text-primary">All Submissions</h2>
             
             <span className="text-[12px] text-text-faint bg-bg-input border border-border px-2.5 py-1 rounded-full">
               {submissions.length} total

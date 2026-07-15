@@ -1,11 +1,13 @@
 ﻿import { claimTask } from '../../api/talent';
 
+const stripHtml = (html = '') => html.replace(/<[^>]*>/g, '');
+
 const STATUS_CLASS = {
-  Open:      'status-badge-Open',
-  Claimed:   'status-badge-Claimed',
+  Open: 'status-badge-Open',
+  Claimed: 'status-badge-Claimed',
   Submitted: 'status-badge-Submitted',
-  Approved:  'status-badge-Approved',
-  Rejected:  'status-badge-Rejected',
+  Approved: 'status-badge-Approved',
+  Rejected: 'status-badge-Rejected',
 };
 
 const TaskCard = ({ task, showClaimButton = false, onClaimed }) => {
@@ -20,11 +22,10 @@ const TaskCard = ({ task, showClaimButton = false, onClaimed }) => {
   };
 
   return (
-    <div className="bg-bg-card border border-border rounded-xl p-5 flex flex-col gap-3 hover:border-border-light hover:-translate-y-0.5 transition-all cursor-default">
-
+    <div className="bg-bg-card border border-border rounded-xl p-4 sm:p-5 flex flex-col gap-3 hover:border-border-light hover:-translate-y-0.5 transition-all cursor-default">
       {/* Header: title + status */}
       <div className="flex items-start justify-between gap-2.5">
-        <p className="text-[15px] font-semibold text-text-primary leading-snug">{task.title || 'Untitled Task'}</p>
+        <p className="text-[14px] sm:text-[15px] font-semibold text-text-primary leading-snug">{task.title || 'Untitled Task'}</p>
         {task.status && (
           <span className={`shrink-0 inline-block px-2.5 py-[3px] rounded-full text-[11px] font-semibold tracking-[0.3px] ${STATUS_CLASS[task.status] || ''}`}>
             {task.status}
@@ -32,14 +33,16 @@ const TaskCard = ({ task, showClaimButton = false, onClaimed }) => {
         )}
       </div>
 
-      
+
       {task.description && (
-        <p className="text-[13px] text-text-muted leading-relaxed">{task.description}</p>
+        <p className="text-[13px] text-text-muted leading-relaxed line-clamp-2">
+          {stripHtml(task.description)}
+        </p>
       )}
 
       {/* Meta row */}
       <div className="flex items-center justify-between flex-wrap gap-2 mt-auto">
-        
+
         <span className="text-[12px] text-text-faint">
           {task.dueDate ? `Due: ${task.dueDate}` : 'No due date'}
         </span>

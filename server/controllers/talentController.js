@@ -36,24 +36,41 @@ const getMyTasks = async (req, res) => {
 // @access Talent
 const claimTask = async (req, res) => {
   try {
-    // Two talents can both pass the status === 'Open' check before either saves,
-    // then both write Claimed. Proper fix: findOneAndUpdate({ _id, status: 'Open' })
-    const task = await Task.findById(req.params.id);
+    const task = await Task.findOneAndUpdate(
+      {
+        _id: req.params.id,
+        status: 'Open',
+      },
+      {
+        $set: {
+          status: 'Claimed',
+          assignedTo: req.user._id,
+        },
+      },
+      {
+        new: true,
+      }
+    );
 
     if (!task) {
-      return res.status(404).json({ message: 'Task not found' });
-    }
+      const exists = await Task.exists({ _id: req.params.id });
 
-    if (task.status !== 'Open') {
-      return res.status(400).json({ message: 'Task is no longer available' });
+      if (!exists) {
+        return res.status(404).json({
+          message: 'Task not found',
+        });
+      }
+
+      return res.status(400).json({
+        message: 'Task is no longer available',
+      });
     }
-    task.status = 'Claimed';
-    task.assignedTo = req.user._id;
-    await task.save();
 
     res.json(task);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({
+      message: error.message,
+    });
   }
 };
 

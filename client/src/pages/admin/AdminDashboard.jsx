@@ -1,30 +1,30 @@
 import { useEffect, useState } from 'react';
-import Sidebar from '../../components/admin/Sidebar';
-import TasksTable from '../../components/admin/TasksTable';
+import { fetchAllTasks } from '../../api/tasks';
 import CreateTaskModal from '../../components/admin/CreateTaskModal';
 import EditTaskModal from '../../components/admin/EditTaskModal';
-import { fetchAllTasks } from '../../api/tasks';
+import Sidebar from '../../components/admin/Sidebar';
+import TasksTable from '../../components/admin/TasksTable';
 
 /* ── Search icon ── */
 const IconSearch = () => (
   <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="8.5" cy="8.5" r="5.5"/>
-    <path d="M17 17l-4-4"/>
+    <circle cx="8.5" cy="8.5" r="5.5" />
+    <path d="M17 17l-4-4" />
   </svg>
 );
 
 /* ── Plus icon ── */
 const IconPlus = () => (
   <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-    <path d="M10 4v12M4 10h12"/>
+    <path d="M10 4v12M4 10h12" />
   </svg>
 );
 
 const AdminDashboard = () => {
-  const [tasks, setTasks]           = useState([]);
+  const [tasks, setTasks] = useState([]);
   const [showCreate, setShowCreate] = useState(false);
-  const [editTask, setEditTask]     = useState(null);
-  const [search, setSearch]         = useState('');
+  const [editTask, setEditTask] = useState(null);
+  const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
 
   const loadTasks = async () => {
@@ -40,17 +40,17 @@ const AdminDashboard = () => {
   useEffect(() => { loadTasks(); }, []);
 
   const stats = {
-    total:     tasks.length,
-    open:      tasks.filter((t) => t.status === 'Open').length,
+    total: tasks.length,
+    open: tasks.filter((t) => t.status === 'Open').length,
     submitted: tasks.filter((t) => t.status === 'Submitted').length,
-    approved:  tasks.filter((t) => t.status === 'Approved').length,
+    approved: tasks.filter((t) => t.status === 'Approved').length,
   };
 
   const statCards = [
-    { label: 'Total Tasks', value: stats.total,     colorClass: 'stat-card-default', valueColor: '#E5E2E1' },
-    { label: 'Open',        value: stats.open,      colorClass: 'stat-card-blue',    valueColor: '#60A5FA' },
-    { label: 'Submitted',   value: stats.submitted, colorClass: 'stat-card-info',    valueColor: '#60A5FA' },
-    { label: 'Approved',    value: stats.approved,  colorClass: 'stat-card-green',   valueColor: '#34D399' },
+    { label: 'Total Tasks', value: stats.total, colorClass: 'stat-card-default', valueColor: '#E5E2E1' },
+    { label: 'Open', value: stats.open, colorClass: 'stat-card-blue', valueColor: '#60A5FA' },
+    { label: 'Submitted', value: stats.submitted, colorClass: 'stat-card-info', valueColor: '#60A5FA' },
+    { label: 'Approved', value: stats.approved, colorClass: 'stat-card-green', valueColor: '#34D399' },
   ];
 
   /* Filter tasks */
@@ -66,10 +66,12 @@ const AdminDashboard = () => {
     <div className="flex min-h-screen" style={{ background: '#050505' }}>
       <Sidebar />
 
-      <main className="ml-[240px] flex-1 px-8 py-8" style={{ maxWidth: 'calc(100vw - 240px)' }}>
+      <main
+        className="flex-1 lg:ml-[240px] px-4 sm:px-6 lg:px-8 py-6 lg:py-8 pt-[76px] lg:pt-8 min-w-0"
+      >
 
         {/* Page header */}
-        <div className="flex items-center justify-between mb-7 page-section">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-7 page-section">
           <div>
             <h1 className="font-display text-[22px] font-semibold tracking-tight"
               style={{ color: '#F0F0F0', fontFamily: 'Poppins, sans-serif' }}>
@@ -89,7 +91,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Stats grid */}
-        <div className="grid grid-cols-4 gap-4 mb-6 page-section">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6 page-section">
           {statCards.map(({ label, value, colorClass, valueColor }) => (
             <div key={label} className={`stat-card ${colorClass}`}>
               <span className="block text-[10.5px] font-semibold uppercase tracking-[0.08em] mb-3"
@@ -107,7 +109,7 @@ const AdminDashboard = () => {
         {/* Tasks table */}
         <div className="tasks-container page-section">
           {/* Table toolbar */}
-          <div className="table-header-bar">
+          <div className="table-header-bar flex-col sm:flex-row items-stretch sm:items-center gap-3">
             <div className="flex items-center gap-2">
               <h2 className="text-[15px] font-semibold"
                 style={{ color: '#E5E2E1', fontFamily: 'Poppins, sans-serif' }}>
@@ -124,9 +126,9 @@ const AdminDashboard = () => {
               </span>
             </div>
 
-            <div className="flex items-center gap-2.5 flex-wrap">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-2.5 w-full sm:w-auto">
               {/* Search */}
-              <div className="relative">
+              <div className="relative w-full sm:w-auto">
                 <span className="absolute left-2.5 top-1/2 -translate-y-1/2" style={{ color: '#4B5563' }}>
                   <IconSearch />
                 </span>
@@ -135,8 +137,8 @@ const AdminDashboard = () => {
                   placeholder="Search tasks…"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="search-input-glass"
-                  style={{ minWidth: '180px' }}
+                  className="search-input-glass w-full sm:w-auto"
+                  style={{ minWidth: '0' }}
                 />
               </div>
 
@@ -144,7 +146,7 @@ const AdminDashboard = () => {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="search-input-glass custom-select"
+                className="search-input-glass custom-select w-full sm:w-auto"
                 style={{ paddingLeft: '12px', cursor: 'pointer' }}>
                 <option value="All">All Status</option>
                 <option value="Open">Open</option>

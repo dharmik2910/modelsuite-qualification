@@ -1,5 +1,7 @@
-﻿import { useState } from 'react';
-import { updateTask, fetchTalents } from '../../api/tasks';
+﻿import { useEffect, useState } from 'react';
+import ReactQuill from 'react-quill-new';
+import 'react-quill-new/dist/quill.snow.css';
+import { fetchTalents, updateTask } from '../../api/tasks';
 
 const STATUS_OPTIONS = ['Open', 'Claimed', 'Submitted', 'Approved', 'Rejected'];
 const inputCls = 'w-full bg-bg-input border border-border rounded-lg px-3.5 py-2.5 text-sm text-text-primary outline-none placeholder:text-[#4e4a6e] focus:border-primary focus:ring-[3px] focus:ring-primary/15 transition-all font-sans resize-y';
@@ -7,16 +9,18 @@ const labelCls = 'text-[11px] font-semibold uppercase tracking-[0.5px] text-text
 
 const EditTaskModal = ({ task, onClose, onUpdated }) => {
   const [form, setForm] = useState({
-    title:       task.title       || '',
+    title: task.title || '',
     description: task.description || '',
-    status:      task.status      || 'Open',
-    assignedTo:  task.assignedTo?._id || '',
-    dueDate:     task.dueDate     || '',
+    status: task.status || 'Open',
+    assignedTo: task.assignedTo?._id || '',
+    dueDate: task.dueDate || '',
   });
   const [talents, setTalents] = useState([]);
 
-  useState(() => {
-    fetchTalents().then(({ data }) => setTalents(data)).catch(() => {});
+  useEffect(() => {
+    fetchTalents()
+      .then(({ data }) => setTalents(data))
+      .catch(() => { });
   }, []);
 
   const handleChange = (e) => setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
@@ -31,6 +35,26 @@ const EditTaskModal = ({ task, onClose, onUpdated }) => {
       alert(err.response?.data?.message || 'Failed to update task');
     }
   };
+
+  const quillModules = {
+   toolbar: [
+  [{ header: [1, 2, false] }],
+  ['bold', 'italic', 'underline'],
+  [{ list: 'ordered' }, { list: 'bullet' }],
+  ['link'],
+  ['clean'],
+]
+  };
+
+  const quillFormats = [
+    'header',
+    'bold',
+    'italic',
+    'underline',
+    'list',
+    'bullet',
+    'link',
+  ];
 
   return (
     <div className="fixed inset-0 bg-black/65 backdrop-blur-sm flex items-center justify-center z-[200] p-6"
@@ -50,11 +74,20 @@ const EditTaskModal = ({ task, onClose, onUpdated }) => {
             <input name="title" value={form.title} onChange={handleChange} className={inputCls} />
           </div>
 
-          <div className="flex flex-col gap-1.5">
-            <label className={labelCls}>Description</label>
-            <textarea name="description" value={form.description} onChange={handleChange} rows={3} className={inputCls} />
-          </div>
-
+          <div className="bg-bg-input border border-border rounded-lg overflow-hidden focus-within:border-primary focus-within:ring-[3px] focus-within:ring-primary/15">
+  <ReactQuill
+    theme="snow"
+    modules={quillModules}
+    formats={quillFormats}
+    value={form.description}
+    onChange={(value) =>
+      setForm((prev) => ({
+        ...prev,
+        description: value,
+      }))
+    }
+  />
+</div>
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
               <label className={labelCls}>Status</label>

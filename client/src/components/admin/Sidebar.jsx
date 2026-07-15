@@ -1,4 +1,5 @@
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 /* ── Clean SVG line-art icons (no emojis, no AI icons) ── */
@@ -39,6 +40,12 @@ const IconLogout = () => (
   </svg>
 );
 
+const IconMenu = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+    <path d="M3 5h14M3 10h14M3 15h14"/>
+  </svg>
+);
+
 const navItems = [
   { label: 'Dashboard',   path: '/admin/dashboard',   Icon: IconDashboard   },
   { label: 'Tasks',       path: '/admin/tasks',       Icon: IconTasks       },
@@ -50,19 +57,16 @@ const Sidebar = () => {
   const { user, logout } = useAuth();
   const navigate  = useNavigate();
   const location  = useLocation();
+  const [open, setOpen] = useState(false);
 
-  return (
-    <aside className="fixed inset-y-0 left-0 w-[240px] flex flex-col z-50"
-      style={{ background: '#0D0D0D' }}>
-
-      {/* Brand */}
+  const SidebarContent = (
+    <>
       <div className="flex items-center justify-center px-5 py-6">
         <img src="/modelsuite-talents.png" alt="ModelSuite Talents" className="w-40 h-auto object-contain" />
       </div>
 
       <div className="sidebar-divider mx-4" />
 
-      {/* Nav */}
       <nav className="flex flex-col gap-0.5 flex-1 px-3 pt-5">
         <p className="text-[9.5px] font-semibold uppercase tracking-[0.12em] px-2 mb-2"
           style={{ color: 'rgba(255,255,255,0.25)', fontFamily: 'Inter, sans-serif' }}>
@@ -73,7 +77,7 @@ const Sidebar = () => {
           const isActive = location.pathname === path;
           return (
             <button key={path}
-              onClick={() => navigate(path)}
+              onClick={() => { navigate(path); setOpen(false); }}
               className={`nav-item ${isActive ? 'nav-active' : ''}`}>
               <Icon />
               <span>{label}</span>
@@ -82,7 +86,6 @@ const Sidebar = () => {
         })}
       </nav>
 
-      {/* Footer */}
       <div className="px-3 pb-5">
         <div className="sidebar-divider mb-4" />
         <div className="flex items-center justify-between gap-2 px-1">
@@ -107,7 +110,35 @@ const Sidebar = () => {
           </button>
         </div>
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* Mobile/tablet top bar */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-4 h-14"
+        style={{ background: '#0D0D0D', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+        <img src="/modelsuite-talents.png" alt="ModelSuite Talents" className="w-28 h-auto object-contain" />
+        <button onClick={() => setOpen(true)} style={{ color: '#E5E2E1' }} className="p-2">
+          <IconMenu />
+        </button>
+      </div>
+
+      {/* Desktop sidebar */}
+      <aside className="hidden lg:flex fixed inset-y-0 left-0 w-[240px] flex-col z-50" style={{ background: '#0D0D0D' }}>
+        {SidebarContent}
+      </aside>
+
+      {/* Mobile/tablet drawer */}
+      {open && (
+        <div className="lg:hidden fixed inset-0 z-[100] flex">
+          <div className="absolute inset-0 bg-black/60" onClick={() => setOpen(false)} />
+          <aside className="relative w-[260px] max-w-[80vw] h-full flex flex-col" style={{ background: '#0D0D0D' }}>
+            {SidebarContent}
+          </aside>
+        </div>
+      )}
+    </>
   );
 };
 
